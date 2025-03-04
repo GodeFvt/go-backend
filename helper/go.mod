@@ -3,6 +3,8 @@ module github.com/GodeFvt/go-backend/helper
 go 1.23
 
 require (
+	4d63.com/tz v1.2.0
+	github.com/BlackMocca/sqlx v1.0.0
 	github.com/fatih/structs v1.1.0
 	github.com/gabriel-vasile/mimetype v1.1.2
 	github.com/getsentry/sentry-go v0.31.1
@@ -17,6 +19,7 @@ require (
 )
 
 require (
+	4d63.com/embedfiles v0.0.0-20190311033909-995e0740726f // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
