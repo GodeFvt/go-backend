@@ -12,6 +12,37 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+func NewServer(opt ...grpc.ServerOption) *grpc.Server {
+	options := make([]grpc.ServerOption, 0)
+	options = append(options, opt...)
+	options = append(options,
+		grpc.ChainUnaryInterceptor(
+			recovery.UnaryServerInterceptor(),
+		),
+		grpc.ChainStreamInterceptor(
+			recovery.StreamServerInterceptor(),
+		),
+	)
+
+	return grpc.NewServer(options...)
+}
+
+func NewClient(ctx context.Context, grpcAddress string, timeoutSecond int, opt ...grpc.DialOption) (context.Context, context.CancelFunc, *grpc.ClientConn, error) {
+	options := make([]grpc.DialOption, 0)
+	options = append(options, opt...)
+	options = append(options,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+
+	conn, err := grpc.DialContext(ctx, grpcAddress, options...)
+	if err != nil {
+		return ctx, nil, nil, fmt.Errorf("fail to connect on service with address %s: %w", grpcAddress, err)
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, time.Duration(timeoutSecond)*time.Second)
+	return ctx, cancel, conn, nil
+}
+
 /*
 Example Default
   - NewClient(JAEGER_SERVICE_NAME, SENTRY_DSN)
@@ -20,7 +51,7 @@ Example with Addon ServerOption
   - options = grpc.MaxRecvMsgSize(grpcMaxReceiveSize) = ขยายขนาด Body buffer ที่รับได้
   - NewClient(JAEGER_SERVICE_NAME, SENTRY_DSN, options)
 */
-func NewServer(serviceName string, sentryDSN string, opt ...grpc.ServerOption) *grpc.Server {
+func NewServerWithTracing(serviceName string, sentryDSN string, opt ...grpc.ServerOption) *grpc.Server {
 	tracer := opentracing.GlobalTracer()
 
 	options := make([]grpc.ServerOption, 0)
@@ -57,7 +88,7 @@ func NewServer(serviceName string, sentryDSN string, opt ...grpc.ServerOption) *
 Example
   - NewClient(context.Background(), "localhost:3100", 30)
 */
-func NewClient(ctx context.Context, grpcAddress string, timeoutSecond int, opt ...grpc.DialOption) (context.Context, context.CancelFunc, *grpc.ClientConn, error) {
+func NewClientWithTracing(ctx context.Context, grpcAddress string, timeoutSecond int, opt ...grpc.DialOption) (context.Context, context.CancelFunc, *grpc.ClientConn, error) {
 	options := make([]grpc.DialOption, 0)
 	options = append(options, opt...)
 	options = append(options,
