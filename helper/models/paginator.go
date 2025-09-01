@@ -69,3 +69,11 @@ func (p *Paginator) SetTotalFromRows(rows *sqlx.Rows) error {
 	}
 	return nil
 }
+
+func (p *Paginator) GetOffset() int {
+	return (p.Page - 1) * p.PerPage
+}
+
+func (p *Paginator) GetLimit() int {
+	return p.PerPage
+}
