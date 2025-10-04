@@ -16,19 +16,27 @@ type CookieManager struct {
 	refreshPath string
 }
 
-func NewCookieManager(domain string, secure, crossSite bool) *CookieManager {
+func NewCookieManager(domain string, secure, httpOnly bool) *CookieManager {
 	sameSite := http.SameSiteLaxMode
-	if crossSite && secure {
+	if secure {
 		sameSite = http.SameSiteNoneMode
 	}
 	return &CookieManager{
-		domain:      domain,   // เว้นว่าง "" ใน dev
-		secure:      secure,   // dev=false, prod=true
-		sameSite:    sameSite, // dev=Lax, prod None/Lax ตาม topology
-		httpOnly:    true,
+		domain:      domain, // เว้นว่าง "" ใน dev
+		secure:      secure, // dev=false, prod=true
+		sameSite:    sameSite,
+		httpOnly:    httpOnly,
 		accessPath:  "/",
 		refreshPath: "/",
 	}
+}
+
+func (cm *CookieManager) SetAccessPath(path string) {
+	cm.accessPath = path
+}
+
+func (cm *CookieManager) SetRefreshPath(path string) {
+	cm.refreshPath = path
 }
 
 func (cm *CookieManager) SetCookie(c echo.Context, name, value string, expiresAt time.Time, path string) {
