@@ -1,6 +1,6 @@
 module github.com/GodeFvt/go-backend/helper
 
-go 1.25
+go 1.23
 
 require (
 	4d63.com/tz v1.2.0

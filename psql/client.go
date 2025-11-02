@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/BlackMocca/sqlx"
+	"github.com/jmoiron/sqlx"
 	_ "github.com/ClickHouse/clickhouse-go/v2"
 	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/jackc/pgx/v5/pgxpool"
