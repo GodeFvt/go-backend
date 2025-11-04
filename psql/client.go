@@ -4,12 +4,13 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/jmoiron/sqlx"
 	_ "github.com/ClickHouse/clickhouse-go/v2"
 	_ "github.com/denisenkom/go-mssqldb"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/jmoiron/sqlx"
 	pg "github.com/lib/pq"
 	"github.com/opentracing/opentracing-go"
 	"github.com/qustavo/sqlhooks/v2"
@@ -64,6 +65,8 @@ func connect(ctx context.Context, connectionStr string, databaseType Driver, tra
 		driver = Mssql
 	case Clickhouse:
 		driver = Clickhouse
+	case MySQL:
+		driver = MySQL
 	}
 
 	db, err := sqlx.Connect(string(driver), connectionStr)
