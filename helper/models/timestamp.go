@@ -101,7 +101,7 @@ func (j *Timestamp) UnmarshalJSON(b []byte) error {
 
 	// Try each format until one succeeds
 	for _, layout := range layouts {
-		t, err = time.ParseInLocation(layout, s, Location)
+		t, err = time.Parse(layout, s)
 		if err == nil {
 			*j = Timestamp(t)
 			return nil
@@ -159,12 +159,7 @@ func (j *Timestamp) Scan(value interface{}) error {
 
 	switch v := value.(type) {
 	case time.Time:
-		parsedTime, err := time.ParseInLocation(TimestampLayout, v.In(Location).Format(TimestampLayout), Location)
-		if err != nil {
-			return err
-		}
-		*j = Timestamp(parsedTime)
-
+		*j = Timestamp(v)
 	case string:
 		parsedTime, err := time.ParseInLocation(TimestampLayout, v, Location)
 		if err != nil {
